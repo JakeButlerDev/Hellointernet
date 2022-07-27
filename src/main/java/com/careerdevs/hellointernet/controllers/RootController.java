@@ -68,8 +68,8 @@ public class RootController {
     }
 
     // Create a path variable GET request
-//    @GetMapping("pathvar/{name}")
-//    private String pathVariablePath(PathVariable String name) {
-//        return "Why are you here " + name + "?";
-//    }
+    @GetMapping("pathvar/{name}")
+    private String pathVariablePath(@PathVariable String name) {
+        return "Why are you here " + name + "?";
+    }
 }
