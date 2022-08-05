@@ -26,9 +26,16 @@ public class NasaController {
     // Fourth step is to make a request route that allows you to change the date of the APOD information being requested. You’ll need to use either @PathVariable or @RequestParam, either will work.
     @GetMapping("/{date}")
     public Object getByDate(RestTemplate restTemplate, @PathVariable String date) {
-        String nasaApodDate = nasaApodEndpoint;
-        nasaApodDate += "&date=" + date;
-        return restTemplate.getForObject(nasaApodDate, Object.class);
+        try {
+            String nasaApodDate = nasaApodEndpoint;
+            nasaApodDate += "&date=" + date;
+            return restTemplate.getForObject(nasaApodDate, Object.class);
+        } catch (Exception exception) {
+            return "Issue with date. Investigate.";
+        }
+
+
+//        https://reflectoring.io/spring-boot-exception-handling/
     }
 
     // Fourth request to build is a GET request that will return a collection of 5 randomly selected APOD pictures. You’ll need to reference the APOD documentation linked at the top of this page. There’s a specific APOD endpoint you can hit to get a random amount of images.
