@@ -1,6 +1,8 @@
 package com.careerdevs.hellointernet.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -9,13 +11,15 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/nasa")
 public class NasaController {
 
-    @Value("${myNasaKey}")
-    private String myNasaKey;
+//    @Value("${myNasaKey}")
+//    private String myNasaKey;
 
     //Second step is to create a nasaApodEndpoint field within your new class.
 //    private final String myNasaKey = "HRnjNYo4665YLMXBeNbDzuhhAdZMdWMyhxhSs4QD";
+    @Autowired
+    private Environment env;
 
-    private final String nasaApodEndpoint = "https://api.nasa.gov/planetary/apod?api_key=" + myNasaKey;
+    private final String nasaApodEndpoint = "https://api.nasa.gov/planetary/apod?api_key=" + env.getProperty("myNasaKey", "DEMO_KEY");
 
     // Third step is to add a route handler to your code.
     @GetMapping("/apod")
@@ -48,8 +52,6 @@ public class NasaController {
     }
 
     //TODO: Error handling - 400 bad request when user enters invalid date, FURTHER - print to client with msg provided from server
-
-    //TODO: BONUS - Learn how to store your API Key secretly in the application.properties file. (learn about environment variables)
 
     // Can try to hide in application.properties, if unable to work go for .gitignore
 }
