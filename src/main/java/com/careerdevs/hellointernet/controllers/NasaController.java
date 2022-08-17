@@ -2,27 +2,32 @@ package com.careerdevs.hellointernet.controllers;
 
 import com.careerdevs.hellointernet.models.NasaModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 // First step is to add the RestController and RequestMapping annotations to the NasaController class
 @RestController
 @RequestMapping("/nasa")
 public class NasaController {
 
-//    @Value("${myNasaKey}")
-//    private String myNasaKey;
+    // Can use Autowired for environment variables like below, or also use Value annotation
+//    @Autowired
+//    private Environment env;
+
+    @Value("${myNasaKey}")
+    private String apiKey;
 
     //Second step is to create a nasaApodEndpoint field within your new class.
 //    private final String myNasaKey = "HRnjNYo4665YLMXBeNbDzuhhAdZMdWMyhxhSs4QD";
-    @Autowired
-    private Environment env;
 
     private final String nasaApodEndpoint = "https://api.nasa.gov/planetary/apod?api_key=";
 
@@ -32,7 +37,7 @@ public class NasaController {
         try {
 
             String url = nasaApodEndpoint;
-            url += env.getProperty("myNasaKey", "DEMO_KEY");
+            url += apiKey;
             NasaModel response = restTemplate.getForObject(url, NasaModel.class);
             return ResponseEntity.ok(response);
 
@@ -62,7 +67,15 @@ public class NasaController {
         If not, throw error.
          */
 
-            String nasaApodDate = nasaApodEndpoint + env.getProperty("myNasaKey");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateB = format.parse("Please enter your date in YYYY-MM-DD.");
+            long timestamp = dateB.getTime();
+
+            if (timestamp < 803275200) {
+                return ResponseEntity.status(404).body("Date provided cannot be before June 16, 1995.");
+            }
+
+            String nasaApodDate = nasaApodEndpoint + apiKey;
             nasaApodDate += "&date=" + date;
             return restTemplate.getForObject(nasaApodDate, NasaModel.class);
 
@@ -96,7 +109,7 @@ public class NasaController {
     @GetMapping("/randomnumber")
     public Object getRandomCount(RestTemplate restTemplate) {
         int count = 5;
-        String randomizeApod = nasaApodEndpoint + env.getProperty("myNasaKey");
+        String randomizeApod = nasaApodEndpoint + apiKey;
         randomizeApod += "&count=" + count;
         return restTemplate.getForObject(randomizeApod, NasaModel.class);
     }
@@ -110,8 +123,12 @@ public class NasaController {
 //        int msgIndex = splitErrorMsg.indexOf("msg") + 2;
 //        return splitErrorMsg.get(msgIndex);
         String[] splitErrorMsg = fullErrorMsg.split("\"");
-
-        return "";
+        for (int i = 0; i < splitErrorMsg.length; i++) {
+            if (splitErrorMsg[i].equals("msg") && i+2 < splitErrorMsg.length) {
+                return splitErrorMsg[i+2];
+            }
+        }
+        return "Error";
 
     }
 
