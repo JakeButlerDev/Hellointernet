@@ -67,13 +67,13 @@ public class NasaController {
         If not, throw error.
          */
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateB = format.parse("Please enter your date in YYYY-MM-DD.");
-            long timestamp = dateB.getTime();
-
-            if (timestamp < 803275200) {
-                return ResponseEntity.status(404).body("Date provided cannot be before June 16, 1995.");
-            }
+//            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//            Date dateB = format.parse("Please enter your date as YYYY-MM-DD.");
+//            long timestamp = dateB.getTime();
+//
+//            if (timestamp < 803275200) {
+//                return ResponseEntity.status(404).body("Date provided cannot be before June 16, 1995.");
+//            }
 
             String nasaApodDate = nasaApodEndpoint + apiKey;
             nasaApodDate += "&date=" + date;
